@@ -1,3 +1,8 @@
 .arch-ids
 {arch}
-output
+output*
+stderr.log
+stdout.log
+*.junk
+*.csv
+.BACKUP

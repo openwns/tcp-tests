@@ -26,8 +26,13 @@ testSuite2 = pywns.WNSUnit.ProbesTestSuite(sandboxPath = os.path.join('..', '..'
                                            configFile = 'tcpTestsApplication.py',
                                            shortDescription = 'Traffic of different applications sent over TCP and UDP',
                                            requireReferenceOutput = False,
-                                           disabled = False,
-                                           disabledReason = '')
+                                           disabled = True,
+                                           disabledReason = 'Currently no applications available')
+
+# create a system test
+testSuite = pywns.WNSUnit.TestSuite()
+testSuite.addTest(testSuite1)
+testSuite.addTest(testSuite2)
 
 if __name__ == '__main__':
     # This is only evaluated if the script is called by hand
@@ -41,5 +46,4 @@ if __name__ == '__main__':
     testRunner = pywns.WNSUnit.TextTestRunner(verbosity=verbosity)
 
     # Finally, run the tests.
-    testRunner.run(testSuite1)
-    testRunner.run(testSuite2)
+    testRunner.run(testSuite)
