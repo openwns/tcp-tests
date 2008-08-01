@@ -15,6 +15,7 @@ import copper.Copper
 import glue
 import glue.support.Configuration
 import tcp.TCP
+import tcp.evaluation.default
 
 # create an instance of the WNS configuration
 # The variable must be called WNS!!!!
@@ -66,3 +67,5 @@ WNS.nodes.append(vdhcp)
 
 #WNS.maxSimTime = 1000.0
 WNS.maxSimTime = 200.0
+
+tcp.evaluation.default.installEvaluation(WNS)
