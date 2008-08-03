@@ -6,6 +6,7 @@ import wns.Distribution
 import copper
 
 import ip
+import ip.evaluation.default
 from ip.VirtualARP import VirtualARPServer
 from ip.VirtualDHCP import VirtualDHCPServer
 from ip.VirtualDNS import VirtualDNSServer
@@ -14,7 +15,7 @@ import ip.BackboneHelpers
 import tcp.TCP
 
 import constanze
-
+import constanze.evaluation.default
 
 
 # create an instance of the WNS configuration
@@ -84,6 +85,22 @@ WNS.nodes.append(vdns)
 
 WNS.nodes.append(vdhcp)
 
+constanze.evaluation.default.installEvaluation(sim = WNS,
+                                               maxPacketDelay = 1.0,
+                                               maxPacketSize = 16000,
+                                               maxBitThroughput = 100e6,
+                                               maxPacketThroughput = 10e6,
+                                               delayResolution = 1000,
+                                               sizeResolution = 2000,
+                                               throughputResolution = 10000)
+
+
+ip.evaluation.default.installEvaluation(sim = WNS,
+                                       maxPacketDelay = 0.5,     # s
+                                       maxPacketSize = 2000*8,   # Bit
+                                       maxBitThroughput = 10E6,  # Bit/s
+                                       maxPacketThroughput = 1E6 # Packets/s
+                                       )
 
 
 
