@@ -30,6 +30,7 @@ client = Station_10BaseT(name = "client",
                          _wire = wire,
                          _domainName = "client.tcp.wns.org",
                          _defaultRouter = "127.0.0.1")
+client.ip.enableTrace()
 
 server = Station_10BaseT(name = "server",
                          _wire = wire,
