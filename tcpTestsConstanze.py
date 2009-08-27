@@ -1,7 +1,11 @@
 # import the WNS module. Contains all sub-classes needed for
 # configuration of WNS
+
+import wns
 import wns.WNS
 import wns.Distribution
+import wns.SAR
+import wns.Multiplexer
 import ip
 import ip.evaluation.default
 from ip.VirtualARP import VirtualARPServer
