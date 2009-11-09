@@ -1,20 +1,17 @@
 # import the WNS module. Contains all sub-classes needed for
 # configuration of WNS
 
-import wns
-import wns.WNS
-import wns.Distribution
-import wns.SAR
-import wns.Multiplexer
-import ip
+import openwns
+import openwns.logger
+
 import ip.evaluation.default
 from ip.VirtualARP import VirtualARPServer
 from ip.VirtualDHCP import VirtualDHCPServer
 from ip.VirtualDNS import VirtualDNSServer
 
 import constanze.evaluation.default
-from constanze.Constanze import Constanze, Poisson
-from constanze.Node import ConstanzeComponent, Listener, TCPBinding, TCPListenerBinding
+from constanze.traffic import Poisson
+from constanze.node import ConstanzeComponent, Listener, TCPBinding, TCPListenerBinding
 from ip.BackboneHelpers import Router_10BaseT, Station_10BaseT 
 from ip.IP import IP
 import copper.Copper
@@ -25,8 +22,8 @@ import tcp.evaluation.default
 
 # create an instance of the WNS configuration
 # The variable must be called WNS!!!!
-WNS = wns.WNS.WNS()
-WNS.outputStrategy = wns.WNS.OutputStrategy.DELETE
+WNS = openwns.Simulator(simulationModel = openwns.node.NodeSimulationModel())
+WNS.outputStrategy = openwns.simulator.OutputStrategy.DELETE
 
 wire = copper.Copper.Wire("theWire")
 
@@ -55,12 +52,12 @@ serverListener = Listener(server.ip.domainName + ".listener")
 constanzeServer = ConstanzeComponent(server, (server.ip.domainName) + ".constanze")
 constanzeServer.addListener(tcpServerListenerBinding, serverListener)
 
-WNS.nodes.append(client)
-WNS.nodes.append(server)
+WNS.simulationModel.nodes.append(client)
+WNS.simulationModel.nodes.append(server)
 
 # one Virtual ARP Zone
 varp = VirtualARPServer("vARP", "theWire")
-WNS.nodes.append(varp)
+WNS.simulationModel.nodes.append(varp)
 
 vdhcp = VirtualDHCPServer("vDHCP@",
                           "theWire",
@@ -68,9 +65,9 @@ vdhcp = VirtualDHCPServer("vDHCP@",
                           "255.255.0.0")
 
 vdns = VirtualDNSServer("vDNS", "ip.DEFAULT.GLOBAL")
-WNS.nodes.append(vdns)
+WNS.simulationModel.nodes.append(vdns)
 
-WNS.nodes.append(vdhcp)
+WNS.simulationModel.nodes.append(vdhcp)
 
 #WNS.maxSimTime = 1000.0
 WNS.maxSimTime = 200.0
@@ -93,3 +90,5 @@ ip.evaluation.default.installEvaluation(sim = WNS,
                                        maxBitThroughput = 10E6,  # Bit/s
                                        maxPacketThroughput = 1E6 # Packets/s
                                        )
+
+openwns.setSimulator(WNS)

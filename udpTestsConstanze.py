@@ -1,7 +1,6 @@
 # import the WNS module. Contains all sub-classes needed for
 # configuration of WNS
-import wns.WNS
-import wns.Distribution
+import openwns
 
 import copper
 
@@ -15,15 +14,15 @@ import ip.BackboneHelpers
 import tcp.TCP
 
 import constanze
-import constanze.Node
-import constanze.Constanze
+import constanze.node
+import constanze.traffic
 import constanze.evaluation.default
 
 
 # create an instance of the WNS configuration
 # The variable must be called WNS!!!!
-WNS = wns.WNS.WNS()
-WNS.outputStrategy = wns.WNS.OutputStrategy.DELETE
+WNS = openwns.Simulator(simulationModel = openwns.node.NodeSimulationModel())
+WNS.outputStrategy = openwns.simulator.OutputStrategy.DELETE
 WNS.maxSimTime = 20.0
 
 #  A_____wire_____B
@@ -54,28 +53,28 @@ listenPort = 6666
 
 # for station A
 destinationDomainName = station2.ip.domainName
-binding = constanze.Node.UDPBinding( station1.ip.domainName, destinationDomainName, destinationPort )
-constanze1 = constanze.Node.ConstanzeComponent( station1, "A.constanze" )
-constanze1.addTraffic( binding, constanze.Constanze.CBR( 0.01, 1024, 100 ) )
-listener = constanze.Node.Listener( "A.listener" )
-binding = constanze.Node.UDPListenerBinding( listenPort )
+binding = constanze.node.UDPBinding( station1.ip.domainName, destinationDomainName, destinationPort )
+constanze1 = constanze.node.ConstanzeComponent( station1, "A.constanze" )
+constanze1.addTraffic( binding, constanze.traffic.CBR( 0.01, 1024, 100 ) )
+listener = constanze.node.Listener( "A.listener" )
+binding = constanze.node.UDPListenerBinding( listenPort )
 constanze1.addListener( binding, listener )
 
 # for station B
 destinationDomainName = station1.ip.domainName
-binding = constanze.Node.UDPBinding( station2.domainName, destinationDomainName, destinationPort )
-constanze2 = constanze.Node.ConstanzeComponent( station2, "B.constanze" )
-constanze2.addTraffic( binding, constanze.Constanze.CBR( 0.01, 1024, 100 ) )
-listener = constanze.Node.Listener( "B.listener" )
-binding = constanze.Node.UDPListenerBinding( listenPort )
+binding = constanze.node.UDPBinding( station2.domainName, destinationDomainName, destinationPort )
+constanze2 = constanze.node.ConstanzeComponent( station2, "B.constanze" )
+constanze2.addTraffic( binding, constanze.traffic.CBR( 0.01, 1024, 100 ) )
+listener = constanze.node.Listener( "B.listener" )
+binding = constanze.node.UDPListenerBinding( listenPort )
 constanze2.addListener( binding, listener )
 
 # Add nodes to scenario
-WNS.nodes = [station1, station2]
+WNS.simulationModel.nodes = [station1, station2]
 
 # one Virtual ARP Zone
 varp = VirtualARPServer("vARP", "theWire")
-WNS.nodes.append(varp)
+WNS.simulationModel.nodes.append(varp)
 
 vdhcp = VirtualDHCPServer("vDHCP@",
                           "theWire",
@@ -83,9 +82,9 @@ vdhcp = VirtualDHCPServer("vDHCP@",
                           "255.255.0.0")
 
 vdns = VirtualDNSServer("vDNS", "ip.DEFAULT.GLOBAL")
-WNS.nodes.append(vdns)
+WNS.simulationModel.nodes.append(vdns)
 
-WNS.nodes.append(vdhcp)
+WNS.simulationModel.nodes.append(vdhcp)
 
 constanze.evaluation.default.installEvaluation(sim = WNS,
                                                maxPacketDelay = 1.0,
@@ -104,5 +103,5 @@ ip.evaluation.default.installEvaluation(sim = WNS,
                                        maxPacketThroughput = 1E6 # Packets/s
                                        )
 
-
+openwns.setSimulator(WNS)
 
